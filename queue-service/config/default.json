@@ -6,6 +6,7 @@
     },
     "database": {
       "host": "localhost",
+      "port": 5432,
       "database": "query-service",
       "username": "postgres",
       "password": "postgres"
