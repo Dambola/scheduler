@@ -1,7 +1,7 @@
 CREATE TABLE queue (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     priority BIGINT NOT NULL,
-    task TEXT NOT NULL,
+    parent UUID NOT NULL,
     metadata JSONB NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
