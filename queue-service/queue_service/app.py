@@ -21,4 +21,7 @@ def create_app():
     from queue_service.routes import queue_bp
     app.register_blueprint(queue_bp)
 
+    from queue_service.web import web_bp
+    app.register_blueprint(web_bp)
+
     return app

@@ -2,7 +2,6 @@ from psycopg2.pool import SimpleConnectionPool
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 from logging import Logger
-from uuid import UUID
 
 import json
 
@@ -43,11 +42,34 @@ class QueueService:
         try:
             # with here will take care of put connection when its done
             with self.getcursor() as cur:
-                cur.execute('DELETE FROM queue WHERE id IN (SELECT id FROM queue ORDER BY priority, created_at LIMIT %s) RETURNING *',
+                cur.execute('DELETE FROM queue WHERE id IN ' +
+                            '(SELECT id FROM queue ORDER BY priority, created_at LIMIT %s)' +
+                            'RETURNING *;',
                             (batch_size,))
                 
                 queued_jobs = cur.fetchall()
                 return queued_jobs
 
+        except Exception as e:
+            print("error in executing with exception: ", e)
+
+    def list_queued_job(self, offset: int = 0, limit: int = 0) -> list[QueuedJob]:
+        sql = ('SELECT id, priority, parent, metadata, created_at FROM queue ' +
+                'ORDER BY priority, created_at '+
+                'OFFSET %s ')
+        args = (offset,)
+
+        if limit > 0:
+            sql += 'LIMIT %s'
+            args = (offset, limit)
+
+        try:
+            with self.getcursor() as cur:
+                cur.execute(sql, args)
+                queued_jobs = [QueuedJob.from_dict(qj) \
+                              for qj in cur.fetchall()]
+                print(queued_jobs)
+                return queued_jobs
+                
         except Exception as e:
             print("error in executing with exception: ", e)

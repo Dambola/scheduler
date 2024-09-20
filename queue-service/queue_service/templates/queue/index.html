@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Queued Jobs{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% for queued_job in queued_jobs %}
+    {{ queued_job }}
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
